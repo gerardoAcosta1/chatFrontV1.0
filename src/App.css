@@ -1,0 +1,29 @@
+.principal {
+    
+    height: 100vh;
+    background-color: rgba(18, 104, 191, 0.85);
+    
+
+    position: relative;
+
+    
+}
+.container__modal{
+
+    width: 200px;
+    height: 100px;
+
+    position: absolute;
+    z-index: 3;
+
+    left:40%;
+    top:30%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.527);
+    background-color: rgba(158, 15, 15, 0.682);
+    color: rgba(255, 247, 247, 0.722);
+}

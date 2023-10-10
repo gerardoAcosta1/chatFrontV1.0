@@ -1,0 +1,13 @@
+.container__messages{
+    color: rgba(255, 244, 241, 0.919);
+}
+.container__message{
+    display: flex;
+    list-style: none;
+}
+p{
+    color: rgba(205, 63, 63, 0.7);
+}
+li{
+    margin-left: 12px;
+}

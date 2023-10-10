@@ -1,0 +1,40 @@
+.container__user{
+
+    width: 140%;
+    
+    padding: 12px;
+    display: flex;
+    justify-content: flex-start;
+
+    user-select: none;
+    
+   box-shadow: -1px -1px 12px -1px rgba(0, 0, 0, 0.85);
+    
+}
+.container__user:hover{
+    cursor: pointer;
+    background-color: rgba(5, 3, 3, 0.782);
+}
+.user__firstname{
+
+    margin-left: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    user-select: none;
+
+    color: rgba(152, 206, 15, 0.596);
+}
+.user__firstname:hover{
+    cursor: pointer;
+    color: rgba(237, 240, 233, 0.816);
+}
+.user__image{
+
+    width: 20px;
+    border-radius: 50%;
+    background-color: rgb(188, 201, 188);
+    
+}
+.user__image:hover{
+    cursor: pointer;
+}

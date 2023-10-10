@@ -1,0 +1,151 @@
+.register__main{
+   
+    width: max-content;
+    height: max-content;
+
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    padding: 2%;
+
+    border: 1px solid white;
+    /*background-color: rgba(11, 6, 6, 0.907);*/
+    background-color: rgb(35, 23, 23);
+   
+    background-repeat:repeat;
+    background-attachment:fixed;
+    background-size:40px;
+    
+    box-shadow: -1px -1px 12px -1px rgba(238, 229, 197, 0.85);
+}
+
+
+.container__title__register{
+
+    width: 50%;
+
+    margin: auto;
+    margin-top: 1rem;
+    margin-bottom: 15px;
+}
+.singUp{
+    
+   margin: auto;
+    
+   font-size: 1.5em;
+   font-weight: 400;
+
+   padding: 10px 0;
+
+   color: rgba(255, 166, 0, 0.77);
+}
+.container__register{
+
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+}
+.title__register{
+
+    width: 80%;
+
+    padding-top: .9rem;
+    padding-bottom: 5px;
+
+    margin: auto;
+  
+    
+    color: rgba(169, 154, 154, 0.696);
+}
+.input__register{
+
+    width: 80%;
+    height: 30px;
+
+    margin-left: 8%;
+
+    border: none;
+    outline: none;
+
+    border: 1px solid rgba(0, 0, 0, 0.43);
+    
+    background-color: rgba(244, 254, 247, 0.926);
+}
+
+
+.button__register{
+
+    width: 40%;
+
+    margin: auto;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 10px;
+
+    border: none;
+    border-radius: 12px;
+
+    color: white;
+    background-color: rgb(224, 98, 98);
+}
+.button__register:hover{
+
+    cursor: pointer;
+}
+.container__pie__form{
+    
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+}
+.title__button{
+
+    width: 60%;
+
+    color: rgba(255, 255, 255, 0.665);
+    font-weight: 300;
+}
+.button__login{
+
+    width: 40%;
+
+    padding: 5px;
+
+    border: none;
+
+    color: rgb(230, 222, 222);
+
+    background-color: rgba(100, 205, 215, 0.672);
+}
+.button__login:hover{
+
+    cursor: pointer;
+
+    
+    background-color: rgba(64, 140, 147, 0.672);
+}
+.modal__register{
+
+    width: 30%;
+    height: 15%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: rgba(41, 230, 50, 0.956);
+    border: 1px solid rgba(17, 15, 15, 0.623);
+    
+    top:100px;
+    background-color: rgba(0, 0, 0, 0.402);
+    box-shadow: -1px -1px 12px -1px rgba(238, 229, 197, 0.85);
+    position: absolute;
+}
+.modal__title{
+    font-weight: 400;
+}

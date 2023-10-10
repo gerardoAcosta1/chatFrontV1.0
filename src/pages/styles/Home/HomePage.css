@@ -1,0 +1,43 @@
+.main__home{
+
+    width: 90%;
+    height: 90%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    margin: auto;
+    background-color: rgba(34, 19, 19, 0.782);
+}
+.welcome__home{
+
+    width: 35%;
+    height: 10%;
+   
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 25px;
+    background-color: rgba(0, 0, 0, 0.92);
+    box-shadow: -1px -1px 12px -1px rgba(19, 16, 3, 0.85);
+}
+.title__home{
+
+    font-weight: 300;
+    font-size: 20px;
+    
+    color: rgba(86, 178, 49, 0.956);
+}
+
+.dates__home{
+    width: 90%;
+    height: 90%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+   
+}
