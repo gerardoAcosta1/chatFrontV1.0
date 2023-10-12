@@ -4,7 +4,9 @@
 
     position: relative;
     user-select: none;
+    
 }
+
 
 .conversation__container {
 
@@ -22,7 +24,9 @@
     border-radius: 7px;
 
 }
-
+.activeConver{
+    background-color: green;
+}
 .conversation__container:hover {
 
     cursor: pointer;

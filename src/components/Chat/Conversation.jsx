@@ -1,11 +1,24 @@
 import { useEffect } from 'react'
 import '../styles/Chat/Conversation.css'
-const Conversation = ({ name, image, conversation, setConversaId, conversaId, deleteConversationById, mensaje,sendMessages,getMessages, sendingMessage, setSendingMessage, setMensaje }) => {
+const Conversation = ({ 
+  name, 
+  image, 
+  conversation, 
+  setConversaId, 
+  conversaId, 
+  deleteConversationById, 
+  mensaje,sendMessages,
+  getMessages, 
+  sendingMessage, 
+  setSendingMessage, 
+  setMensaje, 
+  }) => {
 
     const handleConver = (id) =>{
         setConversaId(id)
        getMessages(id)
     }
+
 
     useEffect(() => {
         if (sendingMessage && conversaId === conversation.ConversationId) {
@@ -19,9 +32,14 @@ const Conversation = ({ name, image, conversation, setConversaId, conversaId, de
       const deleteConversation = id => {
         deleteConversationById(id)
       }
+
+      const handleClick = (id) => {
+       
+        setConversaId(id)
+      }
     return (
-        <div className='window'>
-            <div className="conversation__container" onClick={() => handleConver(conversation.ConversationId)}>
+        <div onClick={() => handleClick(conversation.ConversationId)} className={`window ${conversaId == conversation.ConversationId ? 'activeConver' : 'activeConver'}`}>
+            <div className={`conversation__container ${ conversaId == conversation.ConversationId ? 'activeConver' : ''}`} onClick={() => handleConver(conversation.ConversationId)}>
 
                 <div className="conversation__window__button">
                     <img className='avatar' src={image} alt="" />

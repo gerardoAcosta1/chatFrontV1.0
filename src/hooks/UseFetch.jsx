@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom"
 
 const UseFetch = () => {
 
-    
+    //const url = 'https://griffith-bandicoot-nmrz.2.sg-1.fl0.io';
+    const url = 'http://localhost:8001'
+
     const [conversations, setConversation] = useState([]);
     const [messages, setMessages] = useState([]);
 
@@ -19,7 +21,7 @@ const UseFetch = () => {
     const registerUser = (data, { setForm, modal }) => {
 
         axios
-            .post('http://localhost:8001/api/v1/users', data)
+            .post(`${url}/api/v1/users`, data)
             .then(res => {
                 console.log(res)
                 modal()
@@ -39,7 +41,7 @@ const UseFetch = () => {
     const loginUser = (data, { handleLogin }) => {
 
         axios
-            .post('http://localhost:8001/api/v1/users/login', data)
+            .post(`${url}/api/v1/users/login`, data)
             .then(res => {
 
                 localStorage.removeItem('token');
@@ -58,7 +60,7 @@ const UseFetch = () => {
         const token = localStorage.getItem('token')
         
        return axios
-            .post('http://localhost:8001/api/v1/conversations', body, {
+            .post(`${url}/api/v1/conversations`, body, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -77,7 +79,7 @@ const UseFetch = () => {
     const getAllConversations = (userId) => {
         const token = localStorage.getItem('token');
         return axios
-          .get(`http://localhost:8001/api/v1/conversations/${userId}`, {
+          .get(`${url}/api/v1/conversations/${userId}`, {
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -100,7 +102,7 @@ const UseFetch = () => {
       
         const options = {
           method: 'DELETE',
-          url: `http://localhost:8001/api/v1/conversations/${id}`,
+          url: `${url}/api/v1/conversations/${id}`,
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -124,7 +126,7 @@ const UseFetch = () => {
         // Configura las opciones de la solicitud, incluyendo las cabeceras de autorización
         const options = {
           method: 'POST', // Cambia el método HTTP a DELETE
-          url: `http://localhost:8001/api/v1/messages/conversation/${id}`, 
+          url: `${url}/api/v1/messages/conversation/${id}`, 
           data: body, 
           headers: {
             Authorization: `Bearer ${token}`,
@@ -145,7 +147,7 @@ const UseFetch = () => {
       const getMessages = id => {
         const token = localStorage.getItem('token');
        return axios
-            .get(`http://localhost:8001/api/v1/messages/conversation/${id}`,{
+            .get(`${url}/api/v1/messages/conversation/${id}`,{
                 headers: {
                   Authorization: `Bearer ${token}`
                 }

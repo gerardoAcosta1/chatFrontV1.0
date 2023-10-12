@@ -5,7 +5,7 @@ import UseFetch from '../../hooks/UseFetch';
 import Conversation from '../../components/Chat/Conversation';
 import Messages from '../../components/Chat/Messages';
 
-const ChatPage = ({ users, handleLogin }) => {
+const ChatPage = ({  handleLogin }) => {
 
     const [conver, setConver] = useState(false)
 
@@ -13,7 +13,10 @@ const ChatPage = ({ users, handleLogin }) => {
 
     const [sendingMessage, setSendingMessage] = useState(false);
 
-    const [conversaId, setConversaId] = useState()
+    const [conversaId, setConversaId] = useState();
+
+    const [conversations2, setConversations2] = useState([])
+
 
 
     //################## server conections ###############################
@@ -31,17 +34,26 @@ const ChatPage = ({ users, handleLogin }) => {
 
     //############### Use Effect #################
     const fetchData = async () => {
+
         const { id: userId } = JSON.parse(localStorage.getItem('users'));
+
         handleLogin()
+
         const conversations = await getAllConversations(userId);
         
+        await setConversaId(conversations[0].ConversationId)
+       
+        getMessages(conversations[0].ConversationId); 
+
+        setConversations2(conversations)
+
     };
 
 useEffect(() => {
-    fetchData();
-    getMessages(converId)
     
-}, [conversaId, ]);
+    fetchData();
+    
+}, []);
 
 //############## conversations Create ########################################
 
@@ -75,9 +87,11 @@ const onSelectUser = async (participantId) => {
        
     } else {
         alert("Ya tienes una conversación con este usuario");
+        alert(conversationExists)
     }
    
     setConver(!conver)
+    setActive(true)
 };
 
 
@@ -88,7 +102,7 @@ const onSelectUser = async (participantId) => {
         const { id } = JSON.parse(localStorage.getItem('users'));
 
         const participant = participants?.filter(participant => participant.UserId !== id)[0];
-
+        
         const info = {
             name: participant?.User?.firstname,
             avatar: participant?.User?.avatar
@@ -124,6 +138,20 @@ const onSelectUser = async (participantId) => {
 
     };
 
+    const participants = () => {
+        if (conversations2.length === 0) {
+          return [];
+        }
+        const conversation = conversations2.find(
+          (conv) => conv.ConversationId === conversaId
+        );
+    
+        if (conversation) {
+          return conversation.Conversation.Participants;
+        }
+        return [];
+      };
+
     //############## all JSX ########################################
 
     return (
@@ -134,7 +162,7 @@ const onSelectUser = async (participantId) => {
                 {
                     conversations?.map(conversation => (
                         <Conversation
-                        className={true ? 'activeConver' : 'activeConver'}
+                        
                             deleteConversationById={deleteConversationById}
                             name={conversation.Conversation.title ??
                                 getParticipantInfo(conversation?.Conversation.Participants).name}
@@ -155,6 +183,7 @@ const onSelectUser = async (participantId) => {
                             conversaId={conversaId}
                             setConversaId={setConversaId}
                             getMessages={getMessages}
+                           
                         />
                     ))
                 }
@@ -196,16 +225,24 @@ const onSelectUser = async (participantId) => {
 
             <div className='container__users'>
 
-                {
-                    users?.map(user => (
-                        <User
-                            onSelectUser={onSelectUser}
-                            key={user?.id}
-                            user={user}
-                        />
-                    ))
-                }
-            </div>
+    {
+        participants()?.map(user => {
+            
+            return (
+                
+                <User
+                    onSelectUser={onSelectUser}
+                    key={user.UserId}
+                    user={user.User}
+                />
+            );
+        })
+    }
+</div>
+
+
+
+
         </div>
     )
 }
