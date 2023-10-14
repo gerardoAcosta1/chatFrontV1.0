@@ -16,7 +16,7 @@
     position: absolute;
 
     box-shadow: -1px -1px 12px -1px rgba(14, 14, 14, 0.85);
-    border: 1px solid rgba(16, 14, 14, 0.705);
+    border: 2px solid rgba(16, 14, 14, 0.705);
     background-color: rgba(64, 134, 143, 0.781);
 
     transition: all .1s ease-out;
@@ -37,6 +37,8 @@
     box-shadow: 0 0 0 0 black;
 
     transform: scale(.9);
+
+    color: rgba(191, 195, 195, 0.798);
 }
 
 .conversation__window__button {
@@ -62,7 +64,7 @@
 
     display: flex;
 
-    color: rgba(205, 193, 193, 0.919);
+    color: rgba(30, 27, 27, 0.919);
 
 
 }

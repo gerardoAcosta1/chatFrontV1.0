@@ -10,10 +10,6 @@ const UseFetch = () => {
     const [conversations, setConversation] = useState([]);
     const [messages, setMessages] = useState([]);
 
-    const [converId, setConverId] = useState();
-
-    let many = 1;
-
     const navigate = useNavigate()
 
 //------------------------ Register User -------------------------------------
@@ -24,6 +20,7 @@ const UseFetch = () => {
             .post(`${url}/api/v1/users`, data)
             .then(res => {
                 console.log(res)
+                console.log('hola')
                 modal()
                 setTimeout(() => {
                     setForm()
@@ -43,12 +40,14 @@ const UseFetch = () => {
         axios
             .post(`${url}/api/v1/users/login`, data)
             .then(res => {
-
-                localStorage.removeItem('token');
-                localStorage.setItem('users', JSON.stringify(res.data));
-                localStorage.setItem('token', res.data.token);
-                handleLogin();
-                navigate('/chat')
+              const userId = res.data.id; 
+              localStorage.setItem('userId', userId);
+              const user = res.data;
+              const userKey = `user_${user.id}`;
+              localStorage.setItem(userKey, JSON.stringify(user));
+              localStorage.setItem('token', user.token);
+              handleLogin();
+              navigate('/chat');
 
             })
             .catch(err => console.log(err))
@@ -67,12 +66,34 @@ const UseFetch = () => {
             })
             .then(res => {
                 
-                setConverId(res.data)
-                return res.data
+              console.log(res.data)
+
+              return res.data
+            
+            })
+            .catch(err => {
+              console.log(err);
+              throw err; // Rechazar la promesa para manejar errores en el lugar donde se llama
+            });
+            
+    };
+
+    const createComversationGroup = body => {
+      const token = localStorage.getItem('token')
+        
+       return axios
+            .post(`${url}/api/v1/conversations/group`, body, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            .then(res => {
+                
+               console.log(res.data)
             
             })
             .catch(err => console.log(err))
-    };
+    }
 
 //------------------------ Get ALL Conversations ---------------------------------
 
@@ -85,7 +106,7 @@ const UseFetch = () => {
             }
           })
           .then(res => {
-            console.log(res.data)
+    
             setConversation(res.data)
             return res.data;
           })
@@ -110,12 +131,13 @@ const UseFetch = () => {
       
         axios(options)
           .then(res => {
-            const { id: userId } = JSON.parse(localStorage.getItem('users'));
+            const  userId  = localStorage.getItem('userId');
             getAllConversations(userId)
             getAllConversations(userId)
             console.log(res.data);
           })
           .catch(err => console.error(err));
+          
       };
 
 //------------------------- Sed Messages -----------------------------------
@@ -156,7 +178,7 @@ const UseFetch = () => {
               
                     setMessages(res.data)
                     
-                console.log(res.data)                
+                       
             })
             .catch(err => console.log(err))
     };
@@ -165,11 +187,13 @@ const UseFetch = () => {
         return { 
             registerUser,
             loginUser, 
-            createConversation, 
+            createConversation,
+            createComversationGroup, 
             getAllConversations, 
             deleteConversationById, 
-            sendMessages, getMessages, 
-            conversations, messages, converId}
+            sendMessages, getMessages,
+            setMessages, 
+            conversations, messages,}
     }
 
     export default UseFetch

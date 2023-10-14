@@ -18,7 +18,7 @@ const RegisterLayout = ({ setForm }) => {
     const submit = data => {
 
         registerUser(data, { setForm, modal })
-       
+       console.log('submit')
         reset({
             firstname: '',
             lastname: '',

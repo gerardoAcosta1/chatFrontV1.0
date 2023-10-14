@@ -4,153 +4,240 @@ import '../styles/Chat/ChatPage.css';
 import UseFetch from '../../hooks/UseFetch';
 import Conversation from '../../components/Chat/Conversation';
 import Messages from '../../components/Chat/Messages';
+import { initWebSocket } from '../../utils/initWebSocket';
 
-const ChatPage = ({  handleLogin }) => {
+const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
 
-    const [conver, setConver] = useState(false)
-
-    const [mensaje, setMensaje] = useState(''); // Estado para almacenar el mensaje
-
-    const [sendingMessage, setSendingMessage] = useState(false);
-
+    const [mensaje, setMensaje] = useState('');
+    const [localMessage, setLocalMessage] = useState([]);
     const [conversaId, setConversaId] = useState();
+    const [conversations2, setConversations2] = useState([]);
+    const [active, setActive] = useState(false);
+    const [socket, setSocket] = useState(initWebSocket());
 
-    const [conversations2, setConversations2] = useState([])
+
+    const  id = localStorage.getItem('userId');
+    const userId = parseInt(id)
 
 
 
-    //################## server conections ###############################
-    const { 
-        createConversation, 
-        getAllConversations, 
+    const {
+        createConversation,
+        createComversationGroup,
+        getAllConversations,
         sendMessages,
-        getMessages,  
+        getMessages,
+        setMessages,
         deleteConversationById,
-        conversations, 
         messages,
-        converId  
+        conversations
     } = UseFetch();
 
+    //############# Sockets en New Messages #########################
 
-    //############### Use Effect #################
+    useEffect(() => {
+
+        socket.on('message', reseiveMessage);
+
+        return () => {
+            socket.off('message', reseiveMessage);
+        }
+    }, [socket]);
+
+    const reseiveMessage = message => {
+
+        if (message) {
+
+            getMessages(message.conversationId)
+
+            setMessages(preview => [...preview, message]); // Convertimos el conjunto en un array
+
+            setActive(!active)
+
+            reseiveMessage()
+        }
+    }
+
+    //############# fetch data #########################
+
     const fetchData = async () => {
 
-        const { id: userId } = JSON.parse(localStorage.getItem('users'));
-
-        handleLogin()
+        handleLogin();
 
         const conversations = await getAllConversations(userId);
-        
-        await setConversaId(conversations[0].ConversationId)
-       
-        getMessages(conversations[0].ConversationId); 
 
-        setConversations2(conversations)
+        const conversation = conversations.find((conv) => conv.Conversation.title === 'General');
 
+        if (!conversation) {
+
+            const idUsers = users?.map(user => user.id);
+            console.log(idUsers)
+
+            const body = {
+                userId: userId,
+                participantsId: idUsers,
+                title: 'General'
+            };
+
+            createComversationGroup(body);
+        }
     };
 
-useEffect(() => {
-    
-    fetchData();
-    
-}, []);
+    const fetchData2 = async () => {
 
-//############## conversations Create ########################################
+        const conversations = await getAllConversations(userId);
 
-const checkConversationExists = async (userId, participantId) => {
+        const conversation = conversations.find((conv) => conv.Conversation.title === 'General');
 
-    const conversations = await getAllConversations(userId);
+        await setConversaId(conversation?.ConversationId);
 
-    return conversations.some(conversation => {
+        setConversations2(conversations);
 
-        const participants = conversation.Conversation.Participants;
+        socket.emit('joinConversation', conversation?.ConversationId);
 
-        const hasUser = participants.some(participant => participant.UserId === userId);
+        getMessages(conversation?.ConversationId);
+    };
 
-        const hasParticipant = participants.some(participant => participant.UserId === participantId);
+    const fetchData3 = async () => {
 
-        return hasUser && hasParticipant;
-    });
+        const conversations = await getAllConversations(userId);
 
-};
+        setConversations2(conversations);
+    };
 
-const onSelectUser = async (participantId) => {
+    useEffect(() => {
 
-    const { id: userId } = JSON.parse(localStorage.getItem('users'));
-    const body = { userId, participantId };
+        fetchData();
+        fetchData2();
 
-    const conversationExists = await checkConversationExists(userId, participantId);
-   
-    if (!conversationExists) {
-       await createConversation(body); // Esperar a que se cree la conversación
-        await getAllConversations(userId); // Obtener las conversaciones
-       
-    } else {
-        alert("Ya tienes una conversación con este usuario");
-        alert(conversationExists)
-    }
-   
-    setConver(!conver)
-    setActive(true)
-};
+    }, []);
 
+    useEffect(() => {
 
-//############## Paticipants User ########################################
+        fetchData3();
+
+    }, [active]);
+
+    const checkConversationExists = async (userId, participantId) => {
+
+        const conversations = await getAllConversations(userId);
+
+        return conversations.some(conversation => {
+
+            const participants = conversation.Conversation.Participants;
+
+            const hasUser = participants.some(participant => 
+                participant.UserId === userId 
+                && conversation.Conversation.title !== 'General');
+
+            const hasParticipant = participants.some(participant => 
+                participant.UserId === participantId 
+                && conversation.Conversation.title !== 'General');
+
+            setConversaId(conversation.ConversationId)
+
+            return hasUser && hasParticipant;
+        });
+    };
+
+    const onSelectUser = async (participantId) => {
+        
+        const body = { userId, participantId };
+        console.log(typeof userId)
+        
+        const conversationExists = await checkConversationExists(userId, participantId);
+
+        if (!conversationExists) {
+            console.log(body)
+            if (userId == participantId) {
+
+                setMessageNotice('No es posible crear una conversación contigo mismo');
+                notice();
+            } else {
+
+                const newConversationId = await createConversation(body);
+                setConversaId(newConversationId);
+                await getAllConversations(userId);
+
+                socket.emit('joinConversation', newConversationId);
+
+                setActive(!active);
+
+                getMessages(newConversationId)
+            }
+        } else {
+
+            setMessageNotice(`Ya estás en una conversacion con este usuario`);
+            notice();
+        }
+    };
 
     const getParticipantInfo = (participants) => {
 
-        const { id } = JSON.parse(localStorage.getItem('users'));
+        const id = localStorage.getItem('userId');
+        const participant = participants?.filter(participant => participant.UserId !== id)[1];
 
-        const participant = participants?.filter(participant => participant.UserId !== id)[0];
-        
         const info = {
             name: participant?.User?.firstname,
             avatar: participant?.User?.avatar
-        }
-
-        return info
+        };
+        return info;
     };
-
-   //############## Create Messages ########################################
 
     const handleMensajeChange = (event) => {
         setMensaje(event.target.value);
-
-        
     };
 
-    // Función para manejar el envío del mensaje
     const handleSubmit = (event) => {
 
         event.preventDefault();
 
-        const { id: senderId } = JSON.parse(localStorage.getItem('users'));
+        const senderId = localStorage.getItem('userId');
 
         const mensajeData = {
             content: mensaje,
             senderId: senderId
-          };
+        };
 
-        setMensaje(mensajeData);
+        const mensajeDataSocket = {
+            content: mensaje,
+            senderId: senderId,
+            conversationId: conversaId
+        };
 
-        setSendingMessage(true)
-        getMessages(converId)
+        sendMessages(conversaId, mensajeData);
+
+        const mensajeJSON = JSON.stringify(mensajeDataSocket);
+
+
+        // Envía la cadena JSON al servidor
+        socket.emit('message', mensajeJSON);
+
+        setMensaje('');
+
+
+
+
+        setActive(!active)
+
+
 
     };
 
     const participants = () => {
+
         if (conversations2.length === 0) {
-          return [];
+            return [];
         }
         const conversation = conversations2.find(
-          (conv) => conv.ConversationId === conversaId
+            (conv) => conv.ConversationId === conversaId
         );
-    
         if (conversation) {
-          return conversation.Conversation.Participants;
+
+            return conversation.Conversation.Participants;
         }
         return [];
-      };
+    };
 
     //############## all JSX ########################################
 
@@ -162,7 +249,7 @@ const onSelectUser = async (participantId) => {
                 {
                     conversations?.map(conversation => (
                         <Conversation
-                        
+
                             deleteConversationById={deleteConversationById}
                             name={conversation.Conversation.title ??
                                 getParticipantInfo(conversation?.Conversation.Participants).name}
@@ -175,15 +262,10 @@ const onSelectUser = async (participantId) => {
 
                             key={conversation?.Conversation.id}
                             conversation={conversation}
-                            mensaje={mensaje}
-                            sendingMessage={sendingMessage}
-                            setSendingMessage={setSendingMessage}
-                            setMensaje={setMensaje}
-                            sendMessages={sendMessages}
                             conversaId={conversaId}
                             setConversaId={setConversaId}
                             getMessages={getMessages}
-                           
+                            getAllConversations={getAllConversations}
                         />
                     ))
                 }
@@ -191,27 +273,24 @@ const onSelectUser = async (participantId) => {
             </div>
 
             <div className='chat__container'>
-                <div className='chat__lienzo'
-                >
+                <div className='chat__lienzo'>
                     {
                         conversaId
-                        ?
-                        <ul className='ul__chat'>
-                            <li>{ messages.slice().sort((a, b) => a.updateAt - b.updateAt)?.map(message => (
-                            
-                            <Messages 
-                            key={message.id}
-                            message={message}
-                            conversaId={conversaId}
-                            User={User}
-                            />
-                            
-                        ))}</li>
-                       
-                        </ul>
-                        :
-                        ''
-                        
+                            ?
+                            <ul className='ul__chat'>
+
+                                <li>{messages?.map((message, i) => (
+
+                                    <Messages
+                                        key={i}
+                                        message={message.content}
+                                    />
+
+                                ))}</li>
+
+                            </ul>
+                            :
+                            ''
                     }
                 </div>
 
@@ -225,23 +304,20 @@ const onSelectUser = async (participantId) => {
 
             <div className='container__users'>
 
-    {
-        participants()?.map(user => {
-            
-            return (
-                
-                <User
-                    onSelectUser={onSelectUser}
-                    key={user.UserId}
-                    user={user.User}
-                />
-            );
-        })
-    }
-</div>
+                {
+                    participants()?.map(user => {
 
+                        return (
 
-
+                            <User
+                                onSelectUser={onSelectUser}
+                                key={user.UserId}
+                                user={user}
+                            />
+                        );
+                    })
+                }
+            </div>
 
         </div>
     )

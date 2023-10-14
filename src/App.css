@@ -15,15 +15,25 @@
 
     position: absolute;
     z-index: 3;
-
+    font-weight: 200;
     left:40%;
     top:30%;
 
     display: flex;
-    justify-content: center;
+  
     align-items: center;
 
-    border: 1px solid rgba(255, 255, 255, 0.527);
-    background-color: rgba(158, 15, 15, 0.682);
-    color: rgba(255, 247, 247, 0.722);
+    border: 5px solid rgba(190, 12, 12, 0.527);
+    background-color: rgba(0, 0, 0, 0.907);
+    color: rgba(255, 247, 247, 0.815);
+}
+
+.image__notice{
+
+    width: 500x;
+}
+.container__phrase{
+
+    margin-left: 12px;
+    font-weight: 200;
 }

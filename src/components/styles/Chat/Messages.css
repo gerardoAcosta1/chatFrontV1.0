@@ -1,9 +1,11 @@
 .container__messages{
-    color: rgba(255, 244, 241, 0.919);
+    color: rgba(219, 211, 209, 0.886);
 }
 .container__message{
     display: flex;
     list-style: none;
+
+    font-weight: 300;
 }
 p{
     color: rgba(205, 63, 63, 0.7);

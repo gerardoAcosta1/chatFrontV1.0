@@ -5,7 +5,7 @@ import HomePage from './pages/Home/HomePage'
 import ChatPage from './pages/Chat/ChatPage'
 import Header from './components/shared/Header'
 import { useEffect, useState } from 'react'
-import JwtExpired from './utils/jwtExpired'
+import Notices from './utils/Notices'
 import axios from 'axios'
 function App() {
 
@@ -13,6 +13,7 @@ function App() {
   const [login, setLogin] = useState(false);
   const [users, setUsers] = useState()
   const [session, setSession] = useState(false);
+  const [messageNotice, setMessageNotice] = useState('')
 
   const navigate = useNavigate();
 
@@ -33,10 +34,12 @@ function App() {
       setLogin(false)
 
       if(error.response.data.message == 'jwt expired'){
+        setMessageNotice('jwt Expired')
         setSession(true)
         setLogin(false)
       setTimeout(() => {
         setSession(false)
+        setMessageNotice('');
       }, 3000);
 
       navigate('/')
@@ -45,11 +48,23 @@ function App() {
     });
 }
 
+const notice = () => {
+  setSession(true)
+
+  setTimeout(() => {
+    setSession(false)
+    setMessageNotice('');
+  }, 2000);
+
+}
+
 
   return (
     <div className='principal'>
        {
-        session ? <JwtExpired/> : ''
+        session ? <Notices
+        message={messageNotice}
+        /> : ''
        }
         <Header
         login={login}
@@ -64,6 +79,8 @@ function App() {
             <Route path='/chat' element={<ChatPage
             users={users}
             handleLogin={handleLogin}
+            setMessageNotice={setMessageNotice}
+            notice={notice}
             />}></Route>
           </Route>
       </Routes>

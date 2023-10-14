@@ -12,7 +12,7 @@ const LoginLayout = ({ setForm, handleLogin}) => {
     const submit = data => {
         
         loginUser(data,{handleLogin});
-
+        localStorage.setItem('home', 'pass');
         reset({
             email: '',
             password: '',
