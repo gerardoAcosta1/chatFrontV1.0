@@ -76,11 +76,8 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
             if(messages){
                 clienteApi.setMessages(preview => [message, ...preview]);
                 console.log('aqui')
-                clienteApi.getMessages(message.conversationId)
             }
             setEntrante(true)
-            const chatLienzo = document.querySelector('.chat__lienzo');
-            chatLienzo.scrollTop = chatLienzo.scrollHeight;
         }
     }
 
