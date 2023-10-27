@@ -15,10 +15,7 @@ const HomePage = ({handleLogin}) => {
     return (
 
         <div className="main__home">
-            
-           
-
-            
+             
             <section className='dates__home'>
                 {
                     register

@@ -1,13 +1,22 @@
-.container__messages{
-    color: rgba(255, 244, 241, 0.919);
-}
-.container__message{
+.messageFlex{
     display: flex;
-    list-style: none;
 }
-p{
-    color: rgba(205, 63, 63, 0.7);
+.connect{
+
+    color: green;
+}
+.disconnect{
+    color: red;
+}
+.Sender{
+    color: orange;
 }
 li{
     margin-left: 12px;
+    display: flex;
+    flex-direction: column-reverse;
+}
+h3{
+    margin-left: 12px; font-weight: 300; color: rgba(219, 211, 209, 0.886);
+  
 }

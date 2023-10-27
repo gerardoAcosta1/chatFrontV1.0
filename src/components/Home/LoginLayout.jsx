@@ -1,20 +1,21 @@
 import { useForm } from 'react-hook-form'
 import '../styles/Home/LoginLayout.css'
 import UseFetch from '../../hooks/UseFetch'
-import { useState } from 'react'
+
 const LoginLayout = ({ setForm, handleLogin}) => {
 
     const { register, reset, handleSubmit } = useForm()
 
     
-    const {loginUser} = UseFetch();
+    const {clienteApi} = UseFetch();
 
-    const submit = data => {
+    const submit = async data => {
         
-        loginUser(data,{handleLogin});
+       await clienteApi.loginUser(data,{handleLogin});
 
+        localStorage.setItem('home', 'pass');
         reset({
-            email: '',
+            username: '',
             password: '',
         })
     }
@@ -27,9 +28,9 @@ const LoginLayout = ({ setForm, handleLogin}) => {
                     <h3 className="singUp">Login</h3>
                 </div>
                 <div className="container__register">
-                    <div>
-                        <label className="title__register" htmlFor="email">Email</label>
-                        <input className="input__register"{...register('email')} type="email" id="email" />
+                <div>
+                        <label className="title__register" htmlFor="username">Username</label>
+                        <input className="input__register"{...register('username')} type="text" id="username" />
                     </div>
                     <div>
                         <label className="title__register" htmlFor="password">Password</label>

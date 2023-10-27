@@ -4,7 +4,9 @@
 
     position: relative;
     user-select: none;
+    
 }
+
 
 .conversation__container {
 
@@ -14,7 +16,7 @@
     position: absolute;
 
     box-shadow: -1px -1px 12px -1px rgba(14, 14, 14, 0.85);
-    border: 1px solid rgba(16, 14, 14, 0.705);
+    border: 2px solid rgba(16, 14, 14, 0.705);
     background-color: rgba(64, 134, 143, 0.781);
 
     transition: all .1s ease-out;
@@ -22,7 +24,9 @@
     border-radius: 7px;
 
 }
-
+.activeConver{
+    background-color: green;
+}
 .conversation__container:hover {
 
     cursor: pointer;
@@ -33,6 +37,8 @@
     box-shadow: 0 0 0 0 black;
 
     transform: scale(.9);
+
+    color: rgba(191, 195, 195, 0.798);
 }
 
 .conversation__window__button {
@@ -54,11 +60,11 @@
 
     font-size: 13px;
 
-    font-weight: 1000;
+    font-weight: 300;
 
     display: flex;
 
-    color: rgba(205, 193, 193, 0.919);
+    color: rgba(241, 227, 227, 0.919);
 
 
 }

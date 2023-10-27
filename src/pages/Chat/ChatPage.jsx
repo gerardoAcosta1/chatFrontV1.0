@@ -1,128 +1,200 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import User from '../../components/Chat/User';
 import '../styles/Chat/ChatPage.css';
 import UseFetch from '../../hooks/UseFetch';
 import Conversation from '../../components/Chat/Conversation';
 import Messages from '../../components/Chat/Messages';
+import { initWebSocket } from '../../utils/initWebSocket';
+import functionsRender from '../../utils/functionsRender';
 
-const ChatPage = ({ users, handleLogin }) => {
+const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
 
-    const [conver, setConver] = useState(false)
+    const [mensaje, setMensaje] = useState('');
+    const [conversaId, setConversaId] = useState(null);
+    const [socket, setSocket] = useState(initWebSocket());
+    const chatLienzoRef = useRef(null);
+    const id = localStorage.getItem('userId');
+    const userId = parseInt(id)
+    const username = localStorage.getItem('username')
 
-    const [mensaje, setMensaje] = useState(''); // Estado para almacenar el mensaje
-
-    const [sendingMessage, setSendingMessage] = useState(false);
-
-    const [conversaId, setConversaId] = useState()
-
-
-    //################## server conections ###############################
-    const { 
-        createConversation, 
-        getAllConversations, 
-        sendMessages,
-        getMessages,  
-        deleteConversationById,
-        conversations, 
-        messages,
-        converId  
+    const {functions} = functionsRender()
+    
+    const {
+        clienteApi,
+        conversations,
+        messages
     } = UseFetch();
 
-
-    //############### Use Effect #################
-    const fetchData = async () => {
-        const { id: userId } = JSON.parse(localStorage.getItem('users'));
-        handleLogin()
-        const conversations = await getAllConversations(userId);
-        
-    };
-
-useEffect(() => {
-    fetchData();
-    getMessages(converId)
-    
-}, [conversaId, ]);
-
-//############## conversations Create ########################################
-
-const checkConversationExists = async (userId, participantId) => {
-
-    const conversations = await getAllConversations(userId);
-
-    return conversations.some(conversation => {
-
-        const participants = conversation.Conversation.Participants;
-
-        const hasUser = participants.some(participant => participant.UserId === userId);
-
-        const hasParticipant = participants.some(participant => participant.UserId === participantId);
-
-        return hasUser && hasParticipant;
-    });
-
-};
-
-const onSelectUser = async (participantId) => {
-
-    const { id: userId } = JSON.parse(localStorage.getItem('users'));
-    const body = { userId, participantId };
-
-    const conversationExists = await checkConversationExists(userId, participantId);
+    //############# Sockets en New Messages #########################
    
-    if (!conversationExists) {
-       await createConversation(body); // Esperar a que se cree la conversación
-        await getAllConversations(userId); // Obtener las conversaciones
+
+    useEffect(() => {
        
-    } else {
-        alert("Ya tienes una conversación con este usuario");
-    }
-   
-    setConver(!conver)
-};
+        functions.scrollToBottom(chatLienzoRef)
 
+    }, [messages]);
 
-//############## Paticipants User ########################################
+    useEffect(() => {
 
-    const getParticipantInfo = (participants) => {
-
-        const { id } = JSON.parse(localStorage.getItem('users'));
-
-        const participant = participants?.filter(participant => participant.UserId !== id)[0];
-
-        const info = {
-            name: participant?.User?.firstname,
-            avatar: participant?.User?.avatar
+        socket.on('message', reseiveMessage);
+        socket.on('userConnected', userConnect);
+        socket.on('disconnecting', userDisconnect);
+        return () => {
+            socket.off('message', reseiveMessage);
+            socket.off('userConnected', userConnect);
+            socket.off('disconnecting', userDisconnect);
         }
 
-        return info
+    }, [socket]);
+
+    const userConnect = (message) => {
+       console.log(message)
+        if (message.type === 'userConnected') {
+            clienteApi.sendMessages(message.conversationId, message);
+        }
+    }
+    
+    const userDisconnect = (message) => {
+     
+        if (message.type === 'disconnecting') {
+            clienteApi.sendMessages(message.conversationId, message);
+        }
+    }
+    const reseiveMessage = (message) => {
+
+        if (message) {
+
+           clienteApi.getMessages(message.conversationId);
+            
+            if(messages.length > 0){
+                clienteApi.setMessages(preview => [message, ...preview]);
+            }
+            const chatLienzo = document.querySelector('.chat__lienzo');
+            chatLienzo.scrollTop = chatLienzo.scrollHeight;
+        }
+    }
+
+    
+
+    //############# fetch data #########################
+
+    const fetchData = async () => {
+       await handleLogin()
+        const conversation = await conversations?.find((conv) => conv?.Conversation?.title === 'General');
+       
+        if (!conversation) {
+           
+           const users = await clienteApi.getUsers()
+          
+            const idUsers = await users?.map(user => user?.id);
+           
+            if (users) {
+              
+                const body = {
+                    participantIds: idUsers,
+                    title: 'General'
+                }
+               
+                const newGeneral = await clienteApi.createComversationGroup(body, userId);
+                
+                setConversaId(newGeneral.id)
+
+                await clienteApi.getMessages(newGeneral.id)
+               
+                socket.emit('joinConversation', newGeneral.id,username,userId);
+               
+            }
+        }else{
+            await clienteApi.getMessages(conversation.Conversation.id)
+        }
+       
     };
 
-   //############## Create Messages ########################################
+    useEffect(() => {
+
+        handleLogin()
+      
+        fetchData()
+
+    }, []);
+    const onSelectUser = async (participantId) => {
+
+        const body = {
+            usersId: [userId, participantId]
+        }
+
+        const conversationExists = await functions.checkConversationExists(userId, participantId);
+
+        if (!conversationExists) {
+            
+            if (userId == participantId) {
+
+                setMessageNotice('No es posible crear una conversación contigo mismo');
+                notice();
+
+            } else {
+                
+                const newConversation = await clienteApi.createConversation(body,userId);
+
+                setConversaId(newConversation.id);
+                
+                socket.emit('joinConversation', newConversation.id, username, userId);
+
+            }
+        } else {
+
+            setMessageNotice(`Ya estás en una conversacion con este usuario`);
+            notice();
+        }
+    };
 
     const handleMensajeChange = (event) => {
         setMensaje(event.target.value);
-
-        
     };
 
-    // Función para manejar el envío del mensaje
     const handleSubmit = (event) => {
 
         event.preventDefault();
 
-        const { id: senderId } = JSON.parse(localStorage.getItem('users'));
-
         const mensajeData = {
             content: mensaje,
-            senderId: senderId
-          };
+            SenderId: userId,
+            Sender: username
+        };
 
-        setMensaje(mensajeData);
+        const mensajeDataSocket = {
+            content: mensaje,
+            SenderId: userId,
+            Sender:username,
+            conversationId: conversaId
+        };
 
-        setSendingMessage(true)
-        getMessages(converId)
+        clienteApi.sendMessages(conversaId, mensajeData);
+     
+        const mensajeJSON = JSON.stringify(mensajeDataSocket);
+
+        // Envía la cadena JSON al servidor
+        socket.emit('message', mensajeJSON);
+
+        setMensaje('');
 
     };
+
+    const participants = () => {
+
+        if (Array.isArray(conversations) && conversations.length > 0) {
+
+          const conversation = conversations.find((conv) => conv?.Conversation?.id == conversaId);
+
+          if (conversation) {
+
+            return conversation.Conversation?.Participants || [];
+          }
+        }
+      
+        return [];
+      };
+
 
     //############## all JSX ########################################
 
@@ -132,57 +204,55 @@ const onSelectUser = async (participantId) => {
 
             <div className='main__conversations'>
                 {
+                    !conversations.map ||
                     conversations?.map(conversation => (
                         <Conversation
-                        className={true ? 'activeConver' : 'activeConver'}
-                            deleteConversationById={deleteConversationById}
-                            name={conversation.Conversation.title ??
-                                getParticipantInfo(conversation?.Conversation.Participants).name}
 
-                            image={conversation.Conversation.type === 'group'
+                            clienteApi={clienteApi}
+                            name={conversation?.Conversation?.title ??
+                               functions.getParticipantInfo(conversation?.Conversation?.Participants).name}
+
+                            image={conversation?.Conversation?.type === 'group'
                                 ?
-                                conversation.Conversation.conversationImage
+                                conversation?.Conversation?.conversationImage
                                 :
-                                getParticipantInfo(conversation?.Conversation.Participants).avatar}
+                                functions.getParticipantInfo(conversation?.Conversation?.Participants).avatar}
 
-                            key={conversation?.Conversation.id}
+                            key={conversation?.Conversation?.id}
                             conversation={conversation}
-                            mensaje={mensaje}
-                            sendingMessage={sendingMessage}
-                            setSendingMessage={setSendingMessage}
-                            setMensaje={setMensaje}
-                            sendMessages={sendMessages}
                             conversaId={conversaId}
                             setConversaId={setConversaId}
-                            getMessages={getMessages}
+
+
                         />
                     ))
+
                 }
 
             </div>
 
-            <div className='chat__container'>
-                <div className='chat__lienzo'
-                >
+            <div className='chat__container' id='scroll'>
+                <div className='chat__lienzo' id='scroll' ref={chatLienzoRef}>
                     {
-                        conversaId
-                        ?
-                        <ul className='ul__chat'>
-                            <li>{ messages.slice().sort((a, b) => a.updateAt - b.updateAt)?.map(message => (
-                            
-                            <Messages 
-                            key={message.id}
-                            message={message}
-                            conversaId={conversaId}
-                            User={User}
-                            />
-                            
-                        ))}</li>
-                       
-                        </ul>
-                        :
-                        ''
-                        
+                        conversaId && messages.length > 0
+                            ?
+                            <ul className='ul__chat ' id='scroll'>
+                                {
+                                    
+                                }
+                                <li>{messages?.map((message, i) => (
+
+                                    <Messages
+                                        key={i}
+                                        message={message}
+                                        senderId={message.SenderId}
+                                    />
+
+                                ))}</li>
+
+                            </ul>
+                            :
+                            ''
                     }
                 </div>
 
@@ -195,17 +265,21 @@ const onSelectUser = async (participantId) => {
             </div>
 
             <div className='container__users'>
-
+                
                 {
-                    users?.map(user => (
-                        <User
-                            onSelectUser={onSelectUser}
-                            key={user?.id}
-                            user={user}
-                        />
-                    ))
+                    participants()?.map(user => {
+
+                        return (
+                            <User
+                                onSelectUser={onSelectUser}
+                                key={user?.UserId}
+                                user={user}
+                            />
+                        );
+                    })
                 }
             </div>
+
         </div>
     )
 }
