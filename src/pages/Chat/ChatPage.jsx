@@ -35,7 +35,7 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
     }, [messages]);
 
     useEffect(() => {
-
+        clienteApi.getMessages(conversaId)
         socket.on('message', reseiveMessage);
         socket.on('userConnected', userConnect);
         socket.on('disconnecting', userDisconnect);
@@ -44,7 +44,7 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
             socket.off('userConnected', userConnect);
             socket.off('disconnecting', userDisconnect);
         }
-
+        
     }, [socket]);
 
     const userConnect = (message) => {
