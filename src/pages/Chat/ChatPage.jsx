@@ -51,6 +51,7 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
        console.log(message)
         if (message.type === 'userConnected') {
             clienteApi.sendMessages(message.conversationId, message);
+            clienteApi.getMessages(message.conversationId)
         }
     }
     
@@ -58,6 +59,7 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
      
         if (message.type === 'disconnecting') {
             clienteApi.sendMessages(message.conversationId, message);
+            clienteApi.getMessages(message.conversationId)
         }
     }
     const reseiveMessage = (message) => {
@@ -68,6 +70,7 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
             
             if(messages.length > 0){
                 clienteApi.setMessages(preview => [message, ...preview]);
+                clienteApi.getMessages(message.conversationId)
             }
             const chatLienzo = document.querySelector('.chat__lienzo');
             chatLienzo.scrollTop = chatLienzo.scrollHeight;

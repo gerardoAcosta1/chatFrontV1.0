@@ -143,7 +143,6 @@ const UseFetch = () => {
         const response = await this.makeRequest(`${url}/messages/${id}`);
        
         if(response != 'sin mensajes para esta conversación'){
-          console.log(response)
         setMessages(response);
         }else{
           setMessages([])
