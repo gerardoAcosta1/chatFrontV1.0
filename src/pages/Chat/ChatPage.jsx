@@ -179,6 +179,8 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
         // Envía la cadena JSON al servidor
         socket.emit('message', mensajeJSON);
 
+        clienteApi.getMessages(conversaId)
+
         setMensaje('');
 
     };
