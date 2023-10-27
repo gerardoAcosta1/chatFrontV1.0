@@ -50,6 +50,8 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
     const userConnect = (message) => {
        console.log(message)
         if (message.type === 'userConnected') {
+            console.log("Received message:", message);
+            console.log("Current messages:", messages);
             clienteApi.sendMessages(message.conversationId, message);
             clienteApi.getMessages(message.conversationId)
         }
@@ -65,7 +67,8 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
     const reseiveMessage = (message) => {
 
         if (message) {
-
+            console.log("Received message:", message);
+            console.log("Current messages:", messages);
            clienteApi.getMessages(message.conversationId);
             
             if(messages.length > 0){
