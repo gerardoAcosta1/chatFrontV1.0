@@ -12,6 +12,8 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
     const [mensaje, setMensaje] = useState('');
     const [conversaId, setConversaId] = useState(null);
     const [socket, setSocket] = useState(initWebSocket());
+    const [entrante, setEntrante] = useState(false)
+
     const chatLienzoRef = useRef(null);
     const id = localStorage.getItem('userId');
     const userId = parseInt(id)
@@ -67,6 +69,8 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
     const reseiveMessage = (message) => {
 
         if (message) {
+            setEntrante(true)
+            setConversaId(message.conversationId)
             console.log("Received message:", message);
             console.log("Current messages:", messages);
            clienteApi.getMessages(message.conversationId);
@@ -80,7 +84,10 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
         }
     }
 
-    
+    useEffect(()=> {
+        clienteApi.getMessages(conversaId)
+        setEntrante(false)
+    },[entrante, conversaId])
 
     //############# fetch data #########################
 
@@ -183,6 +190,8 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
         socket.emit('message', mensajeJSON);
 
         clienteApi.getMessages(conversaId)
+        setEntrante(true)
+        
 
         setMensaje('');
 
