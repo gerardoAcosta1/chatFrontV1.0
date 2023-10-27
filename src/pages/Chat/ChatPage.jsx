@@ -75,8 +75,9 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
             console.log("Current messages:", messages);
            clienteApi.getMessages(message.conversationId);
             
-            if(messages.length > 0){
+            if(messages){
                 clienteApi.setMessages(preview => [message, ...preview]);
+                console.log('aqui')
                 clienteApi.getMessages(message.conversationId)
             }
             const chatLienzo = document.querySelector('.chat__lienzo');
