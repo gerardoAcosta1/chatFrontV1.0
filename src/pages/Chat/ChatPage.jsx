@@ -54,7 +54,7 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
         if (message.type === 'userConnected') {
             console.log("Received message:", message);
             console.log("Current messages:", messages);
-            clienteApi.sendMessages(message.conversationId, message);
+            //clienteApi.sendMessages(message.conversationId, message);
             clienteApi.getMessages(message.conversationId)
         }
     }
@@ -62,24 +62,23 @@ const ChatPage = ({ users, handleLogin, notice, setMessageNotice }) => {
     const userDisconnect = (message) => {
      
         if (message.type === 'disconnecting') {
-            clienteApi.sendMessages(message.conversationId, message);
+          //  clienteApi.sendMessages(message.conversationId, message);
             clienteApi.getMessages(message.conversationId)
         }
     }
     const reseiveMessage = (message) => {
 
         if (message) {
-            setEntrante(true)
             setConversaId(message.conversationId)
             console.log("Received message:", message);
             console.log("Current messages:", messages);
-           clienteApi.getMessages(message.conversationId);
             
             if(messages){
                 clienteApi.setMessages(preview => [message, ...preview]);
                 console.log('aqui')
                 clienteApi.getMessages(message.conversationId)
             }
+            setEntrante(true)
             const chatLienzo = document.querySelector('.chat__lienzo');
             chatLienzo.scrollTop = chatLienzo.scrollHeight;
         }
