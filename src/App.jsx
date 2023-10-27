@@ -25,7 +25,7 @@ useEffect(()=>{
 
     await axios({
       method: 'GET',
-      url: 'http://localhost:8000/users/',
+      url: 'https://chatv1-0.onrender.com/users/',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
