@@ -5,6 +5,7 @@ const Notices = ({message}) => {
         <div className="container__modal">
             <div className="container__phrase">
                 <img className='image__notice' src='/images/icons/error.png' alt="" />
+                <pre>{JSON.stringify(message, null, 2)}</pre>
                 <h5 className="session__expired"> {message} </h5>
             </div>
             <img className='image__notice' src='/images/vite.svg' alt="" />

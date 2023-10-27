@@ -11,18 +11,16 @@ const RegisterLayout = ({ setForm }) => {
     }
     const { register, reset, handleSubmit } = useForm();
 
-    const { registerUser } = UseFetch();
+    const { clienteApi } = UseFetch();
 
    
 
     const submit = data => {
 
-        registerUser(data, { setForm, modal })
+        clienteApi.registerUser(data, { setForm, modal })
        console.log('submit')
         reset({
-            firstname: '',
-            lastname: '',
-            email: '',
+            username: '',
             password: '',
         })
     }
@@ -38,16 +36,8 @@ const RegisterLayout = ({ setForm }) => {
 
                 <div className="container__register">
                     <div>
-                        <label className="title__register" htmlFor="firstname">First Name</label>
-                        <input className="input__register"{...register('firstname')} type="text" id="firstname" />
-                    </div>
-                    <div>
-                        <label className="title__register" htmlFor="lastname">Last Name</label>
-                        <input className="input__register"{...register('lastname')} type="text" id="lastname" />
-                    </div>
-                    <div>
-                        <label className="title__register" htmlFor="email">Email</label>
-                        <input className="input__register"{...register('email')} type="email" id="email" />
+                        <label className="title__register" htmlFor="username">Username</label>
+                        <input className="input__register"{...register('username')} type="text" id="username" />
                     </div>
                     <div>
                         <label className="title__register" htmlFor="password">Password</label>
