@@ -30,13 +30,12 @@ const ChatPage = ({ handleLogin, notice, setMessageNotice }) => {
     const [anfitriones, setAnfitriones] = useState([]);
     const [EntryCall, setEntryCall] = useState()
     const [userEmit, setUserEmit] = useState()
-    const [consoleMessages, setConsoleMessages] = useState([]);
     //################ useRef's #####################################
     const audioRef = useRef();
     const remoteAudio = useRef()
     const peer1 = useRef(null);
     const chatLienzoRef = useRef(null);
-    //################ fetch and Scripts #####################################
+    //################ fetch and functions #####################################
     const { functions } = functionsRender()
 
     const {
@@ -48,41 +47,6 @@ const ChatPage = ({ handleLogin, notice, setMessageNotice }) => {
 
     //############# Sockets en New Messages #########################
 
-    useEffect(() => {
-
-        functions.scrollToBottom(chatLienzoRef)
-
-    }, [messages]);
-
-    useEffect(() => {
-
-        if (!conversaId) {
-            console.log('conversaId es undefined');
-        } else {
-            clienteApi.getMessages(conversaId);
-            clienteApi.getAllConversations(userId)
-        }
-        setEntrante(false);
-    }, [entrante, conversaId]);
-
-    useEffect(() => {
-
-        handleLogin()
-
-        fetchData()
-      
-
-    }, []);
-
-    useEffect(() => {
-        socket.on('message', reseiveMessage);
-        socket.on('newConversation', newConversation);
-
-        return () => {
-            socket.off('message', reseiveMessage);
-            socket.off('newConversation', newConversation);
-        };
-    }, [socket]);
     let vueltas = 1
     const handleBotonClic = async () => {
 
@@ -130,6 +94,7 @@ const ChatPage = ({ handleLogin, notice, setMessageNotice }) => {
     }else{
         peer1.destroy()
         setUserEmit('')
+        vueltas=1
     }
     };
     useEffect(() => {
@@ -191,6 +156,41 @@ const ChatPage = ({ handleLogin, notice, setMessageNotice }) => {
         }
     };
 
+
+    useEffect(() => {
+
+        functions.scrollToBottom(chatLienzoRef)
+
+    }, [messages]);
+
+    useEffect(() => {
+
+        if (!conversaId) {
+            console.log('conversaId es undefined');
+        } else {
+            clienteApi.getMessages(conversaId);
+            clienteApi.getAllConversations(userId)
+        }
+        setEntrante(false);
+    }, [entrante, conversaId]);
+
+    useEffect(() => {
+
+        handleLogin()
+
+        fetchData()
+    }, []);
+
+    useEffect(() => {
+        socket.on('message', reseiveMessage);
+        socket.on('newConversation', newConversation);
+
+        return () => {
+            socket.off('message', reseiveMessage);
+            socket.off('newConversation', newConversation);
+        };
+    }, [socket]);
+  
     const newConversation = async () => {
         setEntrante(true)
         const conversations = await clienteApi.getAllConversations(userId)
@@ -210,7 +210,7 @@ const ChatPage = ({ handleLogin, notice, setMessageNotice }) => {
             clienteApi.setMessages(preview => [message, ...preview]);
             await setEntrante(true)
         }
-        if (message.Sender == 'server1' && message !== lastServerMessage && from != username) {
+        if (message.Sender == 'server1' && message !== lastServerMessage && from == username) {
             lastServerMessage = message;
             console.log(message)
             await clienteApi.sendMessages(message.ConversationId, message);
