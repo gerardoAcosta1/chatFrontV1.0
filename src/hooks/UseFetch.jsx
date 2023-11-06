@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 const UseFetch = () => {
 
   //const url = 'https://griffith-bandicoot-nmrz.2.sg-1.fl0.io';
-  const url = 'https://chatv1-0.onrender.com'
+  const url = 'http://localhost:8000'
 
   const [conversations, setConversation] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -34,19 +34,19 @@ const UseFetch = () => {
           },
           data,
         });
-        
+
         return response.data;
-        
+
       } catch (error) {
         console.log(error)
-      
+
         return error
       }
     };
 
     async getUsers() {
       const response = await this.makeRequest(`${url}/users/`, { method: 'get' });
-     
+
       return response
     };
 
@@ -67,19 +67,18 @@ const UseFetch = () => {
         } else {
           alert("El token no está presente en la respuesta");
         }
-       
-  
-        localStorage.setItem('username',  response.username)
+        
+        localStorage.setItem('username', response.username)
         localStorage.setItem('userId', userId);
         const userKey = `user_${userId}`;
         localStorage.setItem(userKey, JSON.stringify(response));
-       await localStorage.setItem('token', response.token);
-      
+        await localStorage.setItem('token', response.token);
+
         navigate('/chat');
       } catch (error) {
         alert(JSON.stringify(error))
       }
-     
+
     };
 
     async createConversation(body, id) {
@@ -98,7 +97,6 @@ const UseFetch = () => {
           }
         });
         this.getAllConversations(id)
-        
         return response.data
       }
       catch (error) {
@@ -108,11 +106,8 @@ const UseFetch = () => {
 
     async getAllConversations(id) {
       const response = await this.makeRequest(`${url}/conversations/${id}`);
-
       if (response) {
         setConversation(response);
-    
-
       }
       return response;
     };
@@ -120,38 +115,39 @@ const UseFetch = () => {
     async deleteConversationById(id) {
       await this.makeRequest(`${url}/conversations/${id}`, null, { method: 'delete' });
       const userId = localStorage.getItem('userId');
-
       console.log('Deleted conversation:', id);
       this.getAllConversations(userId)
     };
 
     async sendMessages(id, body) {
-    try {
-      const response =   await this.makeRequest(`${url}/messages/${id}`, body, { method: 'post' });
-      console.log(response)
-      this.getMessages(id)
-    } catch (error) {
-         console.log(error)
-    }
-    
-      
+      try {
+        const response = await this.makeRequest(`${url}/messages/${id}`, body, { method: 'post' });
+
+        this.getMessages(id)
+        return response
+      } catch (error) {
+        console.log(error)
+      }
     };
 
     async getMessages(id) {
 
       try {
         const response = await this.makeRequest(`${url}/messages/${id}`);
-       
-        if(response != 'sin mensajes para esta conversación'){
-          console.log(response)
-        setMessages(response);
+
+        if(Array.isArray(response)){
+          await setMessages(response);
+          
+          return response
         }else{
-          setMessages([])
+          return []
+          console.log(response)
         }
       } catch (error) {
         console.log(error)
+        return []
       }
-     
+
     };
   }
   const clienteApi = new QuerysDB();

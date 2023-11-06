@@ -1,22 +1,39 @@
 .messageFlex{
+
+    width: max-content;
     display: flex;
+    padding: 12px;
+    margin: 12px;
+    background-color: rgba(26, 28, 27, 0.458);
+    border-radius: 40px;
 }
 .connect{
 
-    color: green;
+    color: rgba(36, 194, 36, 0.664);
 }
 .disconnect{
-    color: red;
+    color: rgba(255, 0, 0, 0.672);
+    font-weight: 400;
 }
 .Sender{
-    color: orange;
+    color: rgba(236, 231, 224, 0.84);
+}
+.server1{
+    color: red;
 }
 li{
     margin-left: 12px;
     display: flex;
     flex-direction: column-reverse;
 }
+.botesito{
+    color: rgb(209, 12, 12);
+}
 h3{
-    margin-left: 12px; font-weight: 300; color: rgba(219, 211, 209, 0.886);
-  
+    margin-left: 5px;
+    margin-bottom: 10px; 
+    font-weight: 300; 
+    font-size: .9rem;
+    color:  rgba(68, 174, 193, 0.768);
+
 }

@@ -1,31 +1,33 @@
 .window {
-
-    margin-left: 110px;
-
-    position: relative;
+    width: 12%;
+    min-width: 11%;
+    height: 30px;
     user-select: none;
+   margin-left: 12px;
     
 }
 
 
 .conversation__container {
 
-    width: 100px;
-    top: -25px;
+   height: 90%;
 
-    position: absolute;
-
-    box-shadow: -1px -1px 12px -1px rgba(14, 14, 14, 0.85);
-    border: 2px solid rgba(16, 14, 14, 0.705);
-    background-color: rgba(64, 134, 143, 0.781);
+    box-shadow: -1px -1px 12px -1px rgba(130, 10, 10, 0.161);
+  
+    background-color: rgba(0, 0, 0, 0.781);
 
     transition: all .1s ease-out;
 
-    border-radius: 7px;
+    display: flex;
+    align-items: center;
+
+   
 
 }
 .activeConver{
-    background-color: green;
+    color: rgba(0, 0, 0, 0.589);
+    background-color: rgba(30, 31, 31, 0.116);
+    box-shadow: -1px -1px 12px -1px rgba(115, 112, 112, 0.14);
 }
 .conversation__container:hover {
 
@@ -38,7 +40,7 @@
 
     transform: scale(.9);
 
-    color: rgba(191, 195, 195, 0.798);
+    color: rgba(32, 182, 9, 0.798);
 }
 
 .conversation__window__button {
@@ -46,51 +48,50 @@
     width: 100%;
 
     display: flex;
-
-    gap: 15px;
+    border: none;
 
     position: relative;
 }
 
 .avatar {
-    width: 23px;
+    width: 20%;
+    border:1px solid rgba(9, 9, 9, 0.878);
 }
 
 .name {
 
+   
+    width: 30%;
     font-size: 13px;
 
-    font-weight: 300;
-
+    font-weight: 600;
+    margin-left: 10px;
     display: flex;
 
-    color: rgba(241, 227, 227, 0.919);
+
+    color: rgba(190, 12, 12, 0.72);
 
 
 }
 
 .close__conversation {
 
-    width: 20%;
+    width: 1%;
     height: max-content;
-
-    text-align: end;
+ 
     position: absolute;
 
-    right: 3px;
+    right: 0px;
+    
+   
     font-size: 12px;
     font-weight: 700;
 
-    color: rgb(241, 237, 237);
+    color: rgb(189, 14, 14);
 }
 
 .close__conversation:hover {
-    font-size: 14px;
-}
-
-.hr__windows {
-    border: none;
-    border-left: 1px solid hsla(200, 10%, 50%, 100);
-    height: 300px;
-    width: 1px;
+    font-size: 17px;
+    font-weight: 650;
+   
 }

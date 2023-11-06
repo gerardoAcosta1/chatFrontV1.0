@@ -1,14 +1,14 @@
 .container__user{
 
-    width: 140%;
+  width: 100%;
     
     padding: 12px;
     display: flex;
     justify-content: flex-start;
-
+    align-items: center;
     user-select: none;
     
-   box-shadow: -1px -1px 12px -1px rgba(0, 0, 0, 0.85);
+   box-shadow: -1px -1px 8px -1px rgba(42, 41, 40, 0.155);
     
 }
 .container__user:hover{
@@ -22,7 +22,7 @@
     font-weight: 700;
     user-select: none;
 
-    color: rgba(152, 206, 15, 0.596);
+    color: rgba(83, 160, 16, 0.925);
 }
 .user__firstname:hover{
     cursor: pointer;
@@ -32,9 +32,30 @@
 
     width: 20px;
     border-radius: 50%;
-    background-color: rgb(188, 201, 188);
+    background-color: rgb(168, 171, 165);
     
 }
 .user__image:hover{
     cursor: pointer;
 }
+
+  .sound-emission {
+    width: 30px;
+    height: 10px;
+    background-color: rgb(206, 11, 11);
+    position: relative;
+ margin-left: 5px;
+transform-origin: left;
+border-radius: 40px;
+     /* Aplica la rotación de 45 grados */
+     animation: sound-emission .5s infinite linear;
+   
+  }
+  @keyframes sound-emission {
+   0%,5%,10%,20%,25% {
+      transform: scaleX(.4);
+    }
+    20%, 80% {
+      transform: scaleX(1.2);
+    }
+  }

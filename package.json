@@ -16,7 +16,9 @@
     "react-hook-form": "^7.47.0",
     "react-router-dom": "^6.16.0",
     "react-scroll": "^1.9.0",
-    "socket.io-client": "^4.7.2"
+    "simple-peer": "^9.11.1",
+    "socket.io-client": "^4.7.2",
+    "socket.io-stream": "^0.9.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
@@ -26,6 +28,10 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
-    "vite": "^4.4.5"
+    "events": "^3.3.0",
+    "global": "^4.4.0",
+    "process": "^0.11.10",
+    "vite": "^4.4.5",
+    "vite-compatible-readable-stream": "^3.6.1"
   }
 }

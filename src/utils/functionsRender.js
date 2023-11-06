@@ -18,7 +18,7 @@ const functionsRender = () => {
 
         checkConversationExists = async (userId, participantId, conversations) => {
 
-            return conversations.some(conversation => {
+            return conversations?.some(conversation => {
                 
                 const participants = conversation.Conversation.Participants;
              
@@ -34,9 +34,9 @@ const functionsRender = () => {
             });
         };
 
-        scrollToBottom = (chatLienzoRef) => {
-            if (chatLienzoRef.current) {
-              chatLienzoRef.current.scrollTop = chatLienzoRef.current.scrollHeight;
+        scrollToBottom = (ref) => {
+            if (ref.current) {
+              ref.current.scrollTop = ref.current.scrollHeight;
             }
           };
     }
