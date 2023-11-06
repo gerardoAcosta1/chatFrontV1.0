@@ -25,7 +25,7 @@ useEffect(()=>{
 
     await axios({
       method: 'GET',
-      url: 'http://localhost:8000/users/',
+      url: 'https://griffith-bandicoot-nmrz.2.sg-1.fl0.io/users/',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
