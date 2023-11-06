@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 const UseFetch = () => {
 
   //const url = 'https://griffith-bandicoot-nmrz.2.sg-1.fl0.io';
-  const url = 'https://griffith-bandicoot-nmrz.2.sg-1.fl0.io'
+  const url = 'https://chatv1-0.onrender.com/'
 
   const [conversations, setConversation] = useState([]);
   const [messages, setMessages] = useState([]);
